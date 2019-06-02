@@ -8,7 +8,23 @@ import json
 def write_msg(user_id, message):
     vk.messages.send(user_id=user_id,
                      message=message,
-                     random_id=get_random_id()
+                     random_id=get_random_id(),
+                     )
+
+def write_msg_default(user_id):
+    vk.messages.send(user_id=user_id,
+                     random_id=get_random_id(),
+                     message='Список команд для новостного бота'
+                            '\n \n 1 - регистрация по id'
+                            '\n 2 - Доступные категории для подписки'
+                            '\n 3 - Добавить категорию в подписку'
+                            '\n 4 - Просмотреть подписки на категории'
+                            '\n 5 - Удалить категорию из подписки'
+                            '\n 6 - Добавить подписку по ключевым словам'
+                            '\n 7 - Просмотреть ключеве слова для подписки'
+                            '\n 8 - Удалить ключевые слова для подписки'
+                            '\n 9 - Получить 10 последних новостей по категориям'
+                            '\n 10 - Получить 10 последних новостей по ключевым словам'
                      )
 
 def register(user_id): #регистрация по id
@@ -46,39 +62,31 @@ def open_key(user_id): #Получить 10 последних новостей 
 def menu():
     for event in longpoll.listen():
         if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text:
-            if event.text in {'help', '?', None}:
-                write_msg(event.user_id, 'Список команд для новостного бота'
-                            '\n \n 1 - регистрация по id'
-                            '\n 2 - Доступные категории для подписки'
-                            '\n 3 - Добавить категорию в подписку'
-                            '\n 4 - Просмотреть подписки на категории'
-                            '\n 5 - Удалить категорию из подписки'
-                            '\n 6 - Добавить подписку по ключевым словам'
-                            '\n 7 - Просмотреть ключеве слова для подписки'
-                            '\n 8 - Удалить ключевые слова для подписки'
-                            '\n 9 - Получить 10 последних новостей по категориям'
-                            '\n 10 - Получить 10 последних новостей по ключевым словам'
-                            )
-            elif '1' in event.text:
+            if event.text in {'help', '?'}:
+                write_msg_default(event.user_id)
+            elif event.text is '1':
                 register(event.user_id)
-            elif '2' in event.text:
+            elif event.text is '2':
                 category(event.user_id)
-            elif '3' in event.text:
+            elif event.text is '3':
                 add_cat(event.user_id,event.text)
-            elif '4' in event.text:
+            elif event.text is '4':
                 del_cat(event.user_id,event.text)
-            elif '5' in event.text:
+            elif event.text is '5':
                 view_cat(event.user_id)
-            elif '6' in event.text:
+            elif event.text is '6':
                 add_key(event.user_id,event.text)
-            elif '7' in event.text:
+            elif event.text is '7':
                 del_key(event.user_id,event.text)
-            elif '8' in event.text:
+            elif event.text is '8':
                 view_key(event.user_id)
-            elif '9' in event.text:
+            elif event.text is '9':
                 open_cat(event.user_id)
-            elif '10' in event.text:
+            elif event.text is '10':
                 open_key(event.user_id)
+            else:
+                write_msg_default(event.user_id)
+
 
 session = vk_api.VkApi(token = vk_api_token)
 longpoll = VkLongPoll(session)
